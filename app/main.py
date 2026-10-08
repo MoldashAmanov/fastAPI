@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from schemas import ReviewCreate
+from app.schemas import ReviewCreate
 from datetime import datetime
 
 app = FastAPI(
