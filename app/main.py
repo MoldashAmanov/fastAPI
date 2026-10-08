@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from schemas import ReviewCreate
 from datetime import datetime
 
 app = FastAPI(
@@ -43,4 +44,12 @@ async def status():
     return {
         "status": "online",
         "timestamp": datetime.now().isoformat()
+    }
+
+@app.post("/test-review")
+async def test_review(review: ReviewCreate):
+    """Для проверки валидации"""
+    return {
+        "message": "Отзыв прошел валидацию",
+        "data": review.model_dump()
     }

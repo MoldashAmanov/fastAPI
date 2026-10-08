@@ -1,0 +1,52 @@
+Path-параметры с валидацией Path(...) — добавляет дополнительные правила
+
+from fastapi import FastAPI, Path
+
+app = FastAPI()
+
+@app.get("/reviews/{review_id}")
+async def get_review(
+    review_id: int = Path(
+        ...,              # ... означает обязательный параметр
+        title="ID отзыва",
+        description="Уникальный идентификатор отзыва",
+        ge=1,             # greater or equal (>= 1)
+        le=10000          # less or equal (<= 10000)
+    )
+):
+    """
+    Пример запроса: /reviews/5
+    Если передать /reviews/abc — FastAPI вернет ошибку 422
+    Если передать /reviews/0 — ошибка (ge=1)
+    """
+    return {"review_id": review_id, "status": "found"}
+
+Query-параметры
+
+from fastapi import FastAPI, Query
+from typing import Optional
+
+app = FastAPI()
+
+@app.get("/reviews/")
+async def list_reviews(
+    skip: int = Query(0, ge=0, description="Сколько пропустить"),
+    limit: int = Query(10, ge=1, le=100, description="Сколько вернуть"),
+    rating: Optional[int] = Query(None, ge=1, le=5, description="Фильтр по рейтингу"),
+    search: Optional[str] = Query(None, min_length=2, max_length=100)
+):
+    """
+    Пример: /reviews/?skip=0&limit=5&rating=5&search=отличный
+    
+    Все параметры со значением по умолчанию — необязательные.
+    Optional[...] = None означает "может быть None".
+    """
+    # Здесь будет логика фильтрации
+    return {
+        "skip": skip,
+        "limit": limit,
+        "filters": {
+            "rating": rating,
+            "search": search
+        }
+    }
