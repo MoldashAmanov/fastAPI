@@ -1,0 +1,146 @@
+/* ============ ОБЩИЕ СТИЛИ ============ */
+
+body {
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+/* ============ КАРТОЧКИ ============ */
+
+.card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: none;
+    border-radius: 10px;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.card-title {
+    color: #2c3e50;
+}
+
+/* ============ ЗВЕЗДЫ РЕЙТИНГА ============ */
+
+.text-warning {
+    color: #f39c12 !important;
+    letter-spacing: 2px;
+}
+
+/* ============ КНОПКИ ============ */
+
+.btn {
+    border-radius: 25px;
+    padding-left: 1.2rem;
+    padding-right: 1.2rem;
+    transition: all 0.2s ease;
+}
+
+.btn-sm {
+    border-radius: 20px;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ============ НАВИГАЦИЯ ============ */
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.4rem;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.85);
+    transition: color 0.2s ease;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover,
+.navbar-dark .navbar-nav .nav-link.active {
+    color: #fff;
+    font-weight: 500;
+}
+
+/* ============ ФОРМЫ ============ */
+
+.form-control,
+.form-select {
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    padding: 0.6rem 0.9rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+}
+
+/* ============ АЛЕРТЫ ============ */
+
+.alert {
+    border-radius: 10px;
+    border: none;
+}
+
+/* ============ ПАГИНАЦИЯ ============ */
+
+.pagination .page-link {
+    border-radius: 8px;
+    margin: 0 3px;
+    border: none;
+    color: #0d6efd;
+    transition: all 0.2s ease;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #0d6efd;
+    color: white;
+}
+
+.pagination .page-link:hover {
+    background-color: #e7f1ff;
+    transform: translateY(-1px);
+}
+
+/* ============ FOOTER ============ */
+
+footer {
+    margin-top: auto;
+    border-top: 1px solid #e9ecef;
+}
+
+/* ============ АНИМАЦИЯ ============ */
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.card {
+    animation: fadeIn 0.3s ease;
+}
+
+/* ============ АДАПТИВНОСТЬ ============ */
+
+@media (max-width: 768px) {
+    h1 { font-size: 1.6rem; }
+
+    .card-body { padding: 1rem; }
+
+    .btn {
+        padding-left: 0.9rem;
+        padding-right: 0.9rem;
+    }
+}

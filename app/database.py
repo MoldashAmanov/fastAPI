@@ -14,6 +14,9 @@ engine = create_engine(
 )
 
 # Фабрика сессий
+# autocommit=False - не делать коммит автоматически
+# autoflush=False - не сбрасывать данные автоматически
+# bind=engine - привязать к движку
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # Базовый класс для моделей

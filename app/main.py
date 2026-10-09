@@ -1,7 +1,10 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from app.database import engine, Base
-from app.schemas import ReviewCreate
 from app import models
+from app.config import APP_TITLE, APP_DESCRIPTION, APP_VERSION
 from datetime import datetime
 
 
@@ -9,20 +12,28 @@ from datetime import datetime
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
-    title = "Сайт отзывов",
-    description = "Учебный проект для изучения FastAPI",
-    version = "1.0.0"
+    title = "APP_TITLE",
+    description = "APP_DESCRIPTION",
+    version = "APP_VERSION"
 )
+
+# Статика (css, картинки)
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# Шаблоны
+templates = Jinja2Templates(directory="templates")
 
 # Декоратор @app.get("/") говорит, что эта функция обрабатывает
 # GET-запросы по адресу "/"
-@app.get("/")
-async def root():
+@app.get("/", response_class=HTMLResponse)
+async def root(request: Request):
     """
-    Корневой эндпоинт.
-    Возвращаем словать, который FastAPI преобразует в JSON
+    Теперь возвращаем HTML-страницу
     """
-    return {"message": "Добро пожаловать на сайт отзывов"}
+    return templates.TemplateResponse(
+        "index.html",
+        {"request": request}
+    )
 
 @app.get("/about")
 async def about():
@@ -52,10 +63,3 @@ async def status():
         "timestamp": datetime.now().isoformat()
     }
 
-@app.post("/test-review")
-async def test_review(review: ReviewCreate):
-    """Для проверки валидации"""
-    return {
-        "message": "Отзыв прошел валидацию",
-        "data": review.model_dump()
-    }

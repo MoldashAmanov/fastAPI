@@ -37,9 +37,9 @@ class UserResponse(BaseModel):
 # Отзывы
 class ReviewCreate(BaseModel):
     """Схема создания отзыва"""
-    title: str = Field(..., min_length=3, max_length=200)
-    content: str = Field(..., min_length=10, max_length=5000)
-    rating: int = Field(..., ge=1, le=5)
+    title: str = Field(..., min_length=3, max_length=200, description="Заголовок отзыва")
+    content: str = Field(..., min_length=10, max_length=5000, description="Содержимое отзыва")
+    rating: int = Field(..., ge=1, le=5, description="Оценка от 1 до 5")
 
     @validator('title', 'content')
     def not_empty(cls, v):

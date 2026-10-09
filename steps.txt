@@ -32,4 +32,8 @@ nullable=True - Обязательное поле
 index=True - Ускоряет поиск
 ForeignKey - Ссылка на другую таблицу
 relationship - Связь между объектами
+server_default=func.now() - БД сама ставить текущее время
+back_populates - Обратная связь
 cascade="all, delete-orphan" - Удаление отзывов вместе с пользователями
+
+Jinja2 - Шаблонизатор, превращающий HTML-шаблон + данные в готовый HTML
