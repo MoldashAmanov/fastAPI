@@ -1,6 +1,12 @@
 from fastapi import FastAPI
+from app.database import engine, Base
 from app.schemas import ReviewCreate
+from app import models
 from datetime import datetime
+
+
+# Создаем таблицы, если их нет
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title = "Сайт отзывов",
