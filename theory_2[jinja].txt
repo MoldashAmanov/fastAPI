@@ -1,0 +1,32 @@
+Синтаксис Jinja2:
+{% block name %} ... {% endblock %} - определяет блок для переопределения
+{% extends "base.html" %} - наследуется  от другого шаблона
+{{ variable }} - выводит переменную
+{% if condition %} ... {% endif %} - условие
+{% for item in items %} ... {% endfor %} - цикл
+{# comment #} - комментарий
+
+
+Полезные фильтры Jinja2:
+
+{# Форматирование даты #}
+{{ review.created_at.strftime('%d.%m.%Y') }}
+
+{# Ограничение длины строки #}
+{{ review.content|truncate(100) }}
+
+{# Значение по умолчанию #}
+{{ review.title|default("Без названия") }}
+
+{# Экранирование HTML (по умолчанию включено) #}
+{{ review.content|e }}
+
+{# Отключение экранирования (опасно!) #}
+{{ review.content|safe }}
+
+{# Верхний/нижний регистр #}
+{{ review.title|upper }}
+{{ review.title|lower }}
+
+{# Округление чисел #}
+{{ avg_rating|round(1) }}

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Регистрация{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <div class="card shadow">
+            <div class="card-body p-4">
+                <h3 class="text-center mb-4">
+                    <i class="fas fa-user-plus text-success"></i> Регистрация
+                </h3>
+
+                {% if errors %}
+                <div class="alert alert-danger">
+                    <ul class="mb-0">
+                        {% for error in errors %}<li>{{ error }}</li>{% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                <form method="post" action="/auth/register">
+                    <div class="mb-3">
+                        <label class="form-label">Имя пользователя</label>
+                        <input type="text" name="username" class="form-control" required
+                               minlength="3" maxlength="50"
+                               value="{{ form_data.username if form_data else '' }}"
+                               placeholder="Только буквы, цифры и _">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control" required
+                               value="{{ form_data.email if form_data else '' }}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Пароль</label>
+                        <input type="password" name="password" class="form-control"
+                               required minlength="6">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Подтвердите пароль</label>
+                        <input type="password" name="confirm_password" class="form-control"
+                               required>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">
+                        Зарегистрироваться
+                    </button>
+                </form>
+
+                <p class="text-center mt-3">
+                    Уже есть аккаунт? <a href="/auth/login">Войти</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
