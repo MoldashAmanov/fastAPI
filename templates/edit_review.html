@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Редактирование{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card-show">
+            <div class="card-body p-4">
+                <h3 class="mb-4">
+                    <i class="fas fa-edit text-primary"></i>Редактировать отзыв
+                </h3>
+                <form method="post" action="/reviews/{{ review.id }}/edit">
+                    <div class="mb-3">
+                        <label class="form-label">Заголовок</label>
+                        <input type="text" name="title" class="form-control" required
+                            value="{{ review.title }}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Текст</label>
+                        <textarea name="content" class="form-control" rows="5"
+                        required>{{ review.content }}</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Оценка</label>
+                        <select name="rating" class="form-select" required>
+                            {% for r in [5, 4, 3, 2, 1] %}
+                            <option value="{{ r }}" {% if review.rating == r %}selected{% endif %}
+                            {{ "★" * r }}{{ '☆' * (5 - r) }}({{ r }})>
+                        </option>
+                        {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i>Сохранить
+                    </button>
+                    <a href="/my-reviews" class="btn btn-secondary">Отмена</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Новый отзыв{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-body p-4">
+                <h3 class="mb-4">
+                    <i class="fas fa-pen text-primary"></i>Написать отзыв
+                </h3>
+
+                <form method="post" action="/reviews/create">
+                    <div class="mb-3">
+                        <label class="form-label">Заголовок</label>
+                        <input type="text" name="title" class="form-control" required
+                            minlength="3" maxlength="200"
+                            placeholder="Кратко о чем отзыв">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Текст отзыва</label>
+                        <textarea name="content" class="form-control" rows="5" required
+                            minlength="10"
+                            placeholder="Поделитесь своим опытом..."></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Оценка</label>
+                        <select name="rating" class="form-select" required>
+                            <option value="">Выберите оценку</option>
+                            <option value="5">⭐⭐⭐⭐⭐ Отлично</option>
+                            <option value="4">⭐⭐⭐⭐ Хорошо</option>
+                            <option value="3">⭐⭐⭐ Средне</option>
+                            <option value="2">⭐⭐ Плохо</option>
+                            <option value="1">⭐ Ужасно</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i>Опубликовать
+                    </button>
+                    <a href="/" class="btn btn-secondary">Отмена</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

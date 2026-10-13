@@ -7,6 +7,23 @@
     <div class="col-lg-8">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1><i class="fas fa-comments text-primary"></i> Все отзывы</h1>
+
+            <div class="dropdown">
+                <button class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                    <i class="fas fa-sort"></i>
+                    {% if sort == 'new' %}Новые
+                    {% elif sort == 'old' %}Старые
+                    {% elif sort == 'rating_high' %}Высокий рейтинг
+                    {% elif sort == 'rating_low' %}Низкий рейтинг
+                    {% endif %}
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="/?sort=new">Новые</a></li>
+                    <li><a class="dropdown-item" href="/?sort=old">Старые</a></li>
+                    <li><a class="dropdown-item" href="/?sort=rating_high">Высокий рейтинг</a></li>
+                    <li><a class="dropdown-item" href="/?sort=rating_low">Низкий рейтинг</a></li>
+                </ul>
+            </div>
         </div>
 
         {% if reviews %}
@@ -33,6 +50,28 @@
                 </div>
             </div>
             {% endfor %}
+
+            {% if pagination.total_pages > 1 %}
+            <nav>
+                <ul class="pagination justify-content-center">
+                    <li class="page-item {% if not pagination.has_prev %}disabled{% endif %}">
+                        <a class="page-link" href="/?page={{ pagination.page - 1 }}&sort={{ sort }}">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </li>
+                    {% for p in range(1, pagination.total_pages + 1) %}
+                    <li class="page-item {% if p == pagination.page %}active{% endif %}">
+                        <a class="page-link" href="/?page={{ p }}&sort={{ sort }}">{{ p }}</a>
+                    </li>
+                    {% endfor %}
+                    <li class="page-item {% if not pagination.has_next %}disabled{% endif %}">
+                        <a class="page-link" href="/?page={{ pagination.page + 1 }}&sort={{ sort }}">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            {% endif %}
         {% else %}
             <div class="alert alert-info">
                 <i class="fas fa-info-circle"></i> Пока нет отзывов.
@@ -49,16 +88,26 @@
                 <hr>
                 <div class="d-flex justify-content-between">
                     <span>Всего отзывов:</span>
-                    <span class="fw-bold">{{ stats.total if stats else 0 }}</span>
+                    <span class="fw-bold">{{ stats.total }}</span>
                 </div>
                 <div class="d-flex justify-content-between mt-2">
                     <span>Средний рейтинг:</span>
                     <span class="fw-bold text-warning">
-                        {{ stats.avg_rating if stats else 0 }} ★
+                        {{ stats.avg_rating }} ★
                     </span>
                 </div>
             </div>
         </div>
+
+        {% if not user %}
+        <div class="card shadow-sm mt-3">
+            <div class="card-body text-center">
+                <p class="mb-2">Хотите оставить отзыв?</p>
+                <a href="/auth/login" class="btn btn-primary btn-sm">Войти</a>
+                <a href="/auth/register" class="btn btn-outline-primary btn-sm">Регистрация</a>
+            </div>
+        </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

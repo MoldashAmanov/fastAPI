@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Главная - Отзывы{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="fas fa-comments text-primary"></i> Все отзывы</h1>
+        </div>
+
+        {% if reviews %}
+            {% for review in reviews %}
+            <div class="card mb-3 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <h5 class="card-title mb-0">
+                            <a href="/reviews/{{ review.id }}" class="text-decoration-none text-dark">
+                                {{ review.title }}
+                            </a>
+                        </h5>
+                        <div class="text-warning">
+                            {% for _ in range(review.rating) %}★{% endfor %}
+                            {% for _ in range(5 - review.rating) %}☆{% endfor %}
+                        </div>
+                    </div>
+                    <p class="card-text mt-2">{{ review.content|truncate(250) }}</p>
+                    <small class="text-muted">
+                        <i class="fas fa-user"></i> {{ review.author.username }}
+                        <i class="fas fa-calendar ms-2"></i>
+                        {{ review.created_at.strftime('%d.%m.%Y %H:%M') }}
+                    </small>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> Пока нет отзывов.
+                {% if user %}<a href="/reviews/new">Напишите первый!</a>
+                {% else %}<a href="/auth/login">Войдите</a>, чтобы написать отзыв.{% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5><i class="fas fa-chart-simple"></i> Статистика</h5>
+                <hr>
+                <div class="d-flex justify-content-between">
+                    <span>Всего отзывов:</span>
+                    <span class="fw-bold">{{ stats.total if stats else 0 }}</span>
+                </div>
+                <div class="d-flex justify-content-between mt-2">
+                    <span>Средний рейтинг:</span>
+                    <span class="fw-bold text-warning">
+                        {{ stats.avg_rating if stats else 0 }} ★
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
