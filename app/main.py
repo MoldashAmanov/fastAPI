@@ -139,6 +139,12 @@ async def register_post(
     return RedirectResponse("/", status_code=303)
 
 
+@app.get("/auth/logout")
+async def logout(request: Request):
+    clear_user_session(request)
+    return RedirectResponse("/", status_code=303)
+
+
 # ===== Страницы отзывов =====
 
 @app.get("/", response_class=HTMLResponse)
