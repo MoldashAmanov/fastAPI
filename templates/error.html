@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}Ошибка{% endblock %}
+
+{% block content %}
+<div class="text-center py-5">
+    <h1 class="display-1 text-danger">{{ status_code }}</h1>
+    <h2 class="mb-3">Что-то пошло не так</h2>
+    <p class="lead">{{ detail }}</p>
+    <a href="/" class="bnt btn-primary">
+        <i class="fas fa-home"></i>На главную
+    </a>
+</div>
+{% endblock %}
