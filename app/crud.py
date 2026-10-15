@@ -2,8 +2,8 @@ from sqlalchemy.orm import Session
 from sqlalchemy import desc, func, or_
 from fastapi import HTTPException
 from typing import Optional, List
-from app.models import Review, User
-from app.schemas import ReviewCreate, ReviewUpdate
+from app.models import Review, User, Comment
+from app.schemas import ReviewCreate, ReviewUpdate, CommentCreate, CommentUpdate
 
 
 # ===== Отзывы =====
@@ -166,9 +166,98 @@ def get_reviews_stats(db: Session) -> dict:
 
 
 # ===== Пользователи =====
+
 def get_user_by_username(db: Session, username: str) -> Optional[User]:
     return db.query(User).filter(User.username == username).first()
 
 
 def get_user_by_email(db: Session, email: str) -> Optional[User]:
     return db.query(User).filter(User.email == email).first()
+
+
+# ===== Комментарии =====
+
+def get_comment(db: Session, comment_id: int) -> Optional[Comment]:
+    """Получить комментарий по ID"""
+    return db.query(Comment).filter(Comment.id == comment_id).first()
+
+
+def get_review_comments(db: Session, review_id: int) -> List[Comment]:
+    """Все комментарии к отзыву (в хронологическом порядке)"""
+    return (
+        db.query(Comment)
+        .filter(Comment.review_id == review_id)
+        .order_by(Comment.created_at)
+        .all()
+    )
+
+
+def create_comment(
+        db: Session,
+        review_id: int,
+        comment_data: CommentCreate,
+        user_id: int
+) -> Comment:
+    """Создать комментарий"""
+    review = get_review(db, review_id)
+    if not review:
+        raise HTTPException(404, 'Отзыв не найден')
+
+    comment = Comment(
+        content=comment_data.content,
+        user_id=user_id,
+        review_id=review_id
+    )
+    db.add(comment)
+    db.commit()
+    db.refresh(comment)
+    return comment
+
+
+def update_comment(
+        db: Session,
+        comment_id: int,
+        comment_data: CommentUpdate,
+        user_id: int
+) -> Comment:
+    """Обновить комментарий"""
+
+    comment = get_comment(db, comment_id)
+
+    if not comment:
+        raise HTTPException(404, 'Комментарий не найден')
+
+    if comment.user_id != user_id:
+        raise HTTPException(403, 'Нет прав на редактирование')
+
+    update_data = comment_data.model_dump(exclude_unset=True)
+    for field, value in update_data.items():
+        setattr(comment, field, value)
+
+    db.commit()
+    db.refresh(comment)
+    return comment
+
+
+def delete_comment(
+        db: Session,
+        comment_id: int,
+        user_id: int
+) -> None:
+    """Удалить комментарий (только свой)"""
+
+    comment = get_comment(db, comment_id)
+
+    if not comment:
+        raise HTTPException(404, 'Комментарий не найден')
+
+    if comment.user_id != user_id:
+        raise HTTPException(403, 'Нет прав на удаление')
+
+    db.delete(comment)
+    db.commit()
+
+
+def count_review_comments(db: Session, review_id: int) -> int:
+    """Количество комментариев к отзыву"""
+    return db.query(Comment).filter(Comment.review_id==review_id).count()

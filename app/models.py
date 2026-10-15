@@ -27,7 +27,11 @@ class User(Base):
         back_populates="author",
         cascade="all, delete-orphan"
     )
-
+    comments = relationship(
+        'Comment',
+        back_populates='author',
+        cascade='all, delete-orphan'
+    )
 
 class Review(Base):
     """Таблица отзывов"""
@@ -47,3 +51,36 @@ class Review(Base):
     )
 
     author = relationship("User", back_populates="reviews")
+    comments = relationship(
+        'Comment',
+        back_populates='review',
+        cascade='all, delete-orphan',
+        order_by='Comment.created_at'
+    )
+
+
+class Comment(Base):
+    """Таблица комментариев.
+    Привязка: пользователь плюс отзыв
+    """
+    __tablename__ = 'comments'
+
+    id = Column(Integer, primary_key=True, index=True)
+    content = Column(Text, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+    user_id = Column(
+        Integer,
+        ForeignKey('users.id', ondelete='CASCADE'),
+        nullable=False
+    )
+    review_id = Column(
+        Integer,
+        ForeignKey('reviews.id', ondelete='CASCADE'),
+        nullable=False
+    )
+
+    # Связи
+    author = relationship('User', back_populates='comments')
+    review = relationship('Review', back_populates='comments')

@@ -2,7 +2,8 @@ from pydantic import BaseModel, Field, EmailStr, validator
 from datetime import datetime
 from typing import Optional
 
-# Пользователи
+# ===== Пользователи =====
+
 class UserCreate(BaseModel):
     """Схема для регистрации"""
     username: str = Field(..., min_length=3, max_length=50)
@@ -34,7 +35,8 @@ class UserResponse(BaseModel):
         from_attributes = True
 
 
-# Отзывы
+# ===== Отзывы =====
+
 class ReviewCreate(BaseModel):
     """Схема создания отзыва"""
     title: str = Field(..., min_length=3, max_length=200, description="Заголовок отзыва")
@@ -68,3 +70,41 @@ class ReviewResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+# ===== Комментарии =====
+
+class CommentCreate(BaseModel):
+    """Схема создания комментария"""
+    content: str = Field(..., min_length=1, max_length=2000)
+
+    @validator('content')
+    def not_empty(cls, v):
+        if not v.strip():
+            raise ValueError('Комментарий не может быть пустым')
+        return v.strip()
+
+
+class CommentUpdate(BaseModel):
+    """Схема обновления комментария"""
+    content: Optional[str] = Field(None, min_length=1, max_length=2000)
+
+
+class CommentResponse(BaseModel):
+    """Схема ответа с данными комментариями"""
+    id: int
+    content: str
+    created_at: datetime
+    updated_at: Optional[datetime]
+    user_id: int
+    review_id: int
+    author: UserResponse
+
+    class Config:
+        from_attributes = True
+
+
+# Обновляем ReviewResponse - добавляем комментарии и лайки
+class ReviewResponseWithComments(ReviewResponse):
+    """Расширенный ответ: с комментариями"""
+    comments: list[CommentResponse] = []

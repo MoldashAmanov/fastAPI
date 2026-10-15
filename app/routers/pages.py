@@ -5,7 +5,8 @@ from app.database import get_db
 from app.auth import get_current_user, get_flash
 from app.crud import (
     get_review, get_reviews_paginated, get_user_reviews,
-    get_reviews_stats, search_reviews
+    get_reviews_stats, search_reviews, 
+    get_review_comments, count_review_comments
 )
 
 
@@ -34,10 +35,18 @@ async def home(request: Request, page: int = 1, sort: str = 'new',
     pagination = get_reviews_paginated(db, page=page, per_page=5, sort=sort)
     stats = get_reviews_stats(db)
 
+    # Добавляем количество комментариев к каждому отзыву
+    reviews_with_counts = []
+    for review in pagination['items']:
+        reviews_with_counts.append({
+            'review': review,
+            'comments_count': count_review_comments(db, review.id)
+        })
+
     return request.state.templates.TemplateResponse(
         'index.html',
         _ctx(request, {
-            'reviews': pagination['items'],
+            'reviews': reviews_with_counts,
             'pagination': pagination,
             'stats': stats,
             'sort': sort,
@@ -97,9 +106,11 @@ async def review_detail(review_id: int, request: Request,
     if not review:
         raise HTTPException(404, "Отзыв не найден")
 
+    comments = get_review_comments(db, review_id)
+
     return request.state.templates.TemplateResponse(
         'review_detail.html',
-        _ctx(request, {'review': review})
+        _ctx(request, {'review': review, 'comments': comments})
     )
 
 
