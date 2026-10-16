@@ -30,7 +30,7 @@ async def create(
     except Exception as e:
         flash(request, f'Ошибка {e}', 'danger')
 
-    return RedirectResponse('f/reviews/{review_id}', status_code=303)
+    return RedirectResponse(f'/reviews/{review_id}', status_code=303)
 
 
 @router.post('/{comment_id}/delete')
@@ -45,7 +45,7 @@ async def delete(
         return RedirectResponse('/auth/login', status_code=303)
 
     # Запоминаем review_id для редиректа
-    comment = get_comment(db, comment_id, user['id'])
+    comment = get_comment(db, comment_id)
     review_id = comment.review_id if comment else None
 
     try:

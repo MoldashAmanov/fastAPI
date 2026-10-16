@@ -6,7 +6,8 @@ from app.auth import get_current_user, get_flash
 from app.crud import (
     get_review, get_reviews_paginated, get_user_reviews,
     get_reviews_stats, search_reviews, 
-    get_review_comments, count_review_comments
+    get_review_comments, count_review_comments,
+    count_review_likes, has_user_liked
 )
 
 
@@ -34,19 +35,22 @@ async def home(request: Request, page: int = 1, sort: str = 'new',
                db: Session = Depends(get_db)):
     pagination = get_reviews_paginated(db, page=page, per_page=5, sort=sort)
     stats = get_reviews_stats(db)
+    user = get_current_user(request)
 
-    # Добавляем количество комментариев к каждому отзыву
-    reviews_with_counts = []
+
+    reviews_data = []
     for review in pagination['items']:
-        reviews_with_counts.append({
+        reviews_data.append({
             'review': review,
-            'comments_count': count_review_comments(db, review.id)
+            'comments_count': count_review_comments(db, review.id),
+            'likes_count': count_review_likes(db, review.id),
+            'liked': has_user_liked(db, user['id'], review.id) if user else False,
         })
 
     return request.state.templates.TemplateResponse(
         'index.html',
         _ctx(request, {
-            'reviews': reviews_with_counts,
+            'reviews': reviews_data,
             'pagination': pagination,
             'stats': stats,
             'sort': sort,
@@ -107,10 +111,16 @@ async def review_detail(review_id: int, request: Request,
         raise HTTPException(404, "Отзыв не найден")
 
     comments = get_review_comments(db, review_id)
+    user = get_current_user(request)
 
     return request.state.templates.TemplateResponse(
         'review_detail.html',
-        _ctx(request, {'review': review, 'comments': comments})
+        _ctx(request, {
+            'review': review,
+            'comments': comments,
+            'likes_count': count_review_likes(db, review_id),
+            'liked': has_user_liked(db, user['id'], review_id) if user else False,
+            })
     )
 
 

@@ -49,9 +49,21 @@
                         <i class="fas fa-calendar ms-2"></i>
                         {{ review.created_at.strftime('%d.%m.%Y %H:%M') }}
                     </small>
-                    <small class="text-muted">
-                        <i class="fas fa-comment"></i>{{ comments_count }}
-                    </small>
+                    <div class="d-flex align-items-center gap-3">
+                        <!-- Кнопка лайка -->
+                         <button type="butten"
+                                class="btn btn-link p-0 text-decoration-none like-btn"
+                                data-review-id="{{ review.id }}"
+                                {% if not user %}disabled title="Войдите, чтобы лайкать"{% endif %}>
+                           <i class="{% if item.liked %}fas{% else %}far{% endif %} fa-heart
+                           {% if item.liked %}text-danger{% else %}text-muted{% endif %}"></i>
+                           <span class="like-count">{{ item.likes_count }}</span>
+                        </button>
+                        <!-- Комментарии -->
+                         <small class="text-muted">
+                            <i class="fas fa-comment"></i> {{ item.comments_count}}
+                         </small>
+                    </div>
                 </div>
             </div>
             {% endfor %}

@@ -8,7 +8,7 @@ from app.database import engine, Base
 from app.config import SECRET_KEY, APP_TITLE, APP_DESCRIPTION, APP_VERSION
 from app import models
 from app.models import User
-from app.routers import auth, reviews, pages, comments
+from app.routers import auth, reviews, pages, comments, likes
 
 # Создаем таблицы, если их нет
 Base.metadata.create_all(bind=engine)
@@ -70,6 +70,7 @@ async def validation_exception_handler(request: Request, exc):
 app.include_router(auth.router)
 app.include_router(reviews.router)
 app.include_router(comments.router)
+app.include_router(likes.router)
 app.include_router(pages.router)
 
 

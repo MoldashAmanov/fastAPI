@@ -3,7 +3,8 @@ SQLAlchemy модели - таблицы базы данных
 """
 
 from sqlalchemy import (
-    Column, Integer, String, Text, DateTime, ForeignKey, Boolean
+    Column, Integer, String, Text, 
+    DateTime, ForeignKey, Boolean, UniqueConstraint
 )
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -32,6 +33,9 @@ class User(Base):
         back_populates='author',
         cascade='all, delete-orphan'
     )
+    likes = relationship(
+        'Like', back_populates='user', cascade='all, delete-orphan'
+    )
 
 class Review(Base):
     """Таблица отзывов"""
@@ -56,6 +60,9 @@ class Review(Base):
         back_populates='review',
         cascade='all, delete-orphan',
         order_by='Comment.created_at'
+    )
+    likes = relationship(
+        'Like', back_populates='review', cascade='all, delete-orphan'
     )
 
 
@@ -84,3 +91,33 @@ class Comment(Base):
     # Связи
     author = relationship('User', back_populates='comments')
     review = relationship('Review', back_populates='comments')
+
+
+class Like(Base):
+    """Таблица лайков.
+    Составной уникальный ключ (user_id, review_id) - один лайк на 
+    отзыв от пользователя
+    """
+    __tablename__ = 'likes'
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(
+        Integer,
+        ForeignKey('users.id', ondelete='CASCADE'),
+        nullable=False
+    )
+    review_id = Column(
+        Integer,
+        ForeignKey('reviews.id', ondelete='CASCADE'),
+        nullable=False
+    )
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    # Уникальность: один пользователь - один лайк на отзыв
+    __table_args__ = (
+        UniqueConstraint('user_id', 'review_id', name='unique_user_review_like'),
+    )
+
+    user = relationship('User', back_populates='likes')
+    review = relationship('Review', back_populates='likes')
+    

@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-mg-8">
+    <div class="col-md-8">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item">
@@ -14,9 +14,9 @@
             </ol>
         </nav>
 
-        <div class="card-shadow">
+        <div class="card shadow">
             <div class="card-body p-4">
-                <div class="d-flex justify-content-between align-items-start mb-3>">
+                <div class="d-flex justify-content-between align-items-start mb-3">
                     <h1 class="h3">{{ review.title }}</h1>
                     <div class="text-warning" style="font-size: 1.5rem;">
                         {% for _ in range(review.rating) %}★{% endfor %}
@@ -52,9 +52,21 @@
                 {% endif %}
             </div>
         </div>
+
+        <!-- Лайки -->
+        <div class="d-flex justify-content-between align-items-center mb-4 mt-3">
+            <button type="button"
+                    class="btn {% if liked %}btn-danger{% else %}btn-outline-danger{% endif %} like-btn"
+                    data-review-id="{{ review.id }}"
+                    {% if not user %}disabled{% endif %}>
+                <i class="{% if liked %}fas{% else %}far{% endif %} fa-heart"></i>
+                <span class="like-count">{{ likes_count }}</span>
+                <span class="ms-1">Нравится</span>
+                </button>
+        </div>
         
         <!-- Комментарии-->
-        <div class="card-shadow">
+        <div class="card shadow">
             <div class="card-body p-4">
                 <h4 class="mb-4">
                     <i class="fas fa-comments"></i>
@@ -64,7 +76,7 @@
 
                 <!--Форма добавления-->
                 {% if user %}
-                <form method="post" accept="/comments/review/{{ review.id }}/create" class="mb-4">
+                <form method="post" action="/comments/review/{{ review.id }}/create" class="mb-4">
                     <div class="mb-3">
                         <textarea name="content"
                         class="form-control"
@@ -91,7 +103,7 @@
                 <div class="d-flex mb-3" id="comment-{{ comment.id }}">
                     <div class="flex-shrink-0 me-3">
                         <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center"
-                        style="width: 40px; height: 40ppx;">
+                        style="width: 40px; height: 40px;">
                         {{ comment.author.username[0]|upper }}
                     </div>
                     </div>
@@ -110,7 +122,7 @@
                             <form method="post"
                             action="/comments/{{ comment.id }}/delete"
                             onsubmit="return confirm('Удалить комментарий?')">
-                            <button type="submit" class="btn btn-sm bnt-link text-danger p-0">
+                            <button type="submit" class="btn btn-sm btn-link text-danger p-0">
                                 <i class="fas fa-times"></i>
                             </button>
                         </form>
@@ -128,11 +140,11 @@
             </div>
         </div>
 
-        <dif class="mt-3">
+        <div class="mt-3">
             <a href="/" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i>Назад
             </a>
-        </dif>
+        </div>
     </div>
 </div>
 {% endblock %}

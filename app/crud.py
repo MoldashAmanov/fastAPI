@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import desc, func, or_
 from fastapi import HTTPException
 from typing import Optional, List
-from app.models import Review, User, Comment
+from app.models import Review, User, Comment, Like
 from app.schemas import ReviewCreate, ReviewUpdate, CommentCreate, CommentUpdate
 
 
@@ -261,3 +261,48 @@ def delete_comment(
 def count_review_comments(db: Session, review_id: int) -> int:
     """Количество комментариев к отзыву"""
     return db.query(Comment).filter(Comment.review_id==review_id).count()
+
+
+# ===== Лайки =====
+
+def has_user_liked(db: Session, user_id: int, review_id: int) -> bool:
+    """Проверка: лайкнул ли пользователь отзыв"""
+    return db.query(Like).filter(
+        Like.user_id == user_id,
+        Like.review_id == review_id
+    ).first() is not None
+
+
+def count_review_likes(db: Session, review_id: int) -> int:
+    """Количество лайков у отзыва"""
+    return db.query(Like).filter(Like.review_id == review_id).count()
+
+
+def toggle_like(db: Session, user_id: int, review_id: int) -> dict:
+    """
+    Переключить лайк:
+    - если лайка нет - ставим
+    - если есть - убираем
+    Возвращает: {'liked': bool, 'count': int}
+    """
+    # Проверка: существует ли отзыв
+    review = get_review(db, review_id)
+    if not review:
+        raise HTTPException(404, 'Отзыв не найден')
+
+    existing = db.query(Like).filter(
+        Like.user_id == user_id,
+        Like.review_id == review_id
+    ).first()
+
+    if existing:
+        db.delete(existing)
+        liked = False
+    else:
+        new_like = Like(user_id=user_id, review_id=review_id)
+        db.add(new_like)
+        liked = True
+
+    db.commit()
+    count = count_review_likes(db, review_id)
+    return {'liked': liked, 'count': count}
