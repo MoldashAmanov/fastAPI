@@ -40,7 +40,13 @@ async def login(
             }
         )
 
-    set_user_session(request, user.id, user.username)
+    set_user_session(
+        request,
+        user.id,
+        user.username,
+        user.email,
+        user.is_admin
+        )
     flash(request, f"Добро пожаловать, {user.username}!", 'success')
 
     return RedirectResponse('/', status_code=303)
@@ -99,7 +105,13 @@ async def register(
     db.commit()
     db.refresh(user)
 
-    set_user_session(request, user.id, user.username)
+    set_user_session(
+        request,
+        user.id,
+        user.username,
+        user.email,
+        user.is_admin
+        )
     flash(request, "Регистрация прошла успешно!", "success")
 
     return RedirectResponse('/', status_code=303)

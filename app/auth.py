@@ -32,10 +32,12 @@ def authenticate_user(db: Session, username: str, password: str):
 
 # Сессии
 
-def set_user_session(request: Request, user_id: int, username: str):
+def set_user_session(request: Request, user_id: int, username: str, email: str, is_admin: bool = False):
     """Сохраняет пользователя в сессии"""
     request.session['user_id'] = user_id
     request.session['username'] = username
+    request.session['email'] = email
+    request.session['is_admin'] = is_admin
 
 
 def get_current_user(request: Request):
@@ -45,9 +47,16 @@ def get_current_user(request: Request):
     """
     user_id = request.session.get("user_id")
     username = request.session.get("username")
+    email = request.session.get("email")
+    is_admin = request.session.get("is_admin")
 
     if user_id and username:
-        return {"id": user_id, "username": username}
+        return {
+            "id": user_id,
+            "username": username,
+            "email": email,
+            "is_admin": is_admin
+            }
 
     return None
 
